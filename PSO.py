@@ -168,6 +168,7 @@ lb = fl * np.ones([dim, 1])
 ub = ul * np.ones([dim, 1])
 Curve, GbestPositon, GbestScore = PSO(pop, dim, lb, ub, MaxIter, fun)
 time_end = time.time()
+
 print(f"The running time is: {time_end - time_start} s")
 print('The optimal value：', GbestScore)
 print('The optimal solution：', GbestPositon)
