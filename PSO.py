@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 import random
-
+import matplotlib.pyplot as plt
 
 # Benchmarks
 def F1(X):
@@ -147,6 +147,13 @@ def PSO(pop, dim, lb, ub, Max_iter, fun):
                 X[i, :] = Xnew[i, :]
         Ybest, index = SortFitness(fitness)
         X, V = SortPosition(X, V, index)
+        # -----------King--------------------#
+        history.append(X)
+        for i in range(len(fitness)):
+            ave = np.average(fitness)
+        fit_history.append(ave)
+        print('ave=',ave)
+        # -----------King--------------------#
         if (Ybest[0] <= GbestScore):
             GbestScore = Ybest[0]
             GbestPosition[0, :] = X[index[0], :]
@@ -154,21 +161,54 @@ def PSO(pop, dim, lb, ub, Max_iter, fun):
         print(f"Iter {t+1} Best: {GbestPosition} with Score: {GbestScore}")
     return Curve, GbestPosition, GbestScore
 
-def fun(X):
-    return F1(X)
+def plot_convergrnce(Curve):
+    ig, ax = plt.subplots()
+    ax.plot(Curve,color='dodgerblue', marker='o', markeredgecolor='dodgerblue', markerfacecolor='dodgerblue')
+    ax.set_xlabel('Number of Iterations',fontsize=10)
+    ax.set_ylabel('Fitness',fontsize=10)
+    ax.set_xlim(-5,200)
+    ax.set_title('Convergence curve')
+    plt.savefig('image.jpg', format='jpg')
+    plt.show()
+
+def plot_search_history(history):
+    for i in range(len(history)):
+        for n in range(len(history[0])):
+            plt.scatter(history[i][n][0], history[i][n][1], c="black", alpha=0.3, facecolor='white', )
+            plt.xlim(lower, upper)
+            plt.ylim(lower, upper)
+    plt.title('Search history')
+    plt.show()
+
+def plot_fitness(fit_history):
+    plt.plot(fit_history, color='b', marker='o', linewidth=2, markersize=6)
+    plt.title('Average fitness of all Vultures')
+    plt.xlabel('Number of Iterations', fontsize=10)
+    plt.ylabel('Fitness', fontsize=10)
+    plt.xlim(-5, 200)
+    plt.show()
 
 # Execute
+def fun(X):
+    return F1(X)
 time_start = time.time()
-pop = 1000  # Population size n
-MaxIter = 500  # Maximum number of iterations.
-dim = 30  # The dimension.
-fl = -100  # The lower bound of the search interval.
-ul = 100  # The upper bound of the search interval.
-lb = fl * np.ones([dim, 1])
-ub = ul * np.ones([dim, 1])
+pop = 10  # Population size n 1000
+MaxIter = 100  # Maximum number of iterations. 500
+dim = 2  # The dimension. 30
+lower = -100  # The lower bound of the search interval. -100
+upper = 100  # The upper bound of the search interval. 100
+history=[]
+fit_history=[]
+lb = lower * np.ones([dim, 1])
+ub = upper * np.ones([dim, 1])
 Curve, GbestPositon, GbestScore = PSO(pop, dim, lb, ub, MaxIter, fun)
 time_end = time.time()
 
 print(f"The running time is: {time_end - time_start} s")
 print('The optimal value：', GbestScore)
 print('The optimal solution：', GbestPositon)
+plot_convergrnce(Curve)
+plot_search_history(history)
+plot_fitness(fit_history)
+#---------------King---------------------#
+
