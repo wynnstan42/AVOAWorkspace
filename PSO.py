@@ -174,7 +174,7 @@ def plot_convergrnce(Curve):
 def plot_search_history(history):
     for i in range(len(history)):
         for n in range(len(history[0])):
-            plt.scatter(history[i][n][0], history[i][n][1], c="black", alpha=0.3, facecolor='white', )
+            plt.scatter(history[i][n][0], history[i][n][1], c="black", alpha=0.3, facecolor='white')
             plt.xlim(lower, upper)
             plt.ylim(lower, upper)
     plt.title('Search history')

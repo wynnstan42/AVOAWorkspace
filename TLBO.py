@@ -3,7 +3,7 @@ import sys
 import time
 
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 # Benchmarks
 def F1(X):
@@ -97,7 +97,7 @@ class Student:
 
 
 # Teaching learning based optimization
-def tlbo(fitness, max_iter, n, dim, minx, maxx):
+def tlbo(fitness, max_iter, n, dim, minx, maxx, conver, history, fit_history):
     rnd = random.Random(0)
 
     # create n random students
@@ -211,28 +211,76 @@ def tlbo(fitness, max_iter, n, dim, minx, maxx):
                 Xbest = Xnew
 
         Iter += 1
+        # -----------King--------------------#
+        # Convergence
+        conver.append(Fbest)
+        # Average fitness
+        sum=0
+        for i in range(len(classroom)):
+            sum=sum+classroom[i].fitness
+        ave=sum/len(classroom)
+        fit_history.append(ave)
+        #search history
+        for n in range(len(classroom)):
+            history.append(classroom[n].position)
+        # -----------King--------------------#
+
+
     # end-while
 
     # return best student from classroom
-    return Xbest
+    return Xbest , conver, history ,fit_history
 
 
 # end teaching learning based optimization
 
-def fun(X):
-    return F13(X)
+def plot_convergrnce(Curve):
+    ig, ax = plt.subplots()
+    ax.plot(Curve,color='dodgerblue', marker='o', markeredgecolor='dodgerblue', markerfacecolor='dodgerblue')
+    ax.set_xlabel('Number of Iterations',fontsize=10)
+    ax.set_ylabel('Fitness',fontsize=10)
+    ax.set_xlim(-5,200)
+    ax.set_title('Convergence curve')
+    plt.savefig('image.jpg', format='jpg')
+    plt.show()
+
+def plot_search_history(history):
+    for i in range(len(history)):
+        for n in range(len(history[0])):
+            plt.scatter(history[i][n], history[i][n], c="black", alpha=0.3, facecolor='white')
+            plt.xlim(lower, upper)
+            plt.ylim(lower, upper)
+    plt.title('Search history')
+    plt.show()
+
+def plot_fitness(fit_history):
+    plt.plot(fit_history, color='b', marker='o', linewidth=2, markersize=6)
+    plt.title('Average fitness of all Vultures')
+    plt.xlabel('Number of Iterations', fontsize=10)
+    plt.ylabel('Fitness', fontsize=10)
+    plt.xlim(-5, 200)
+    plt.show()
+
 
 # Execute
+def fun(X):
+    return F13(X)
 time_start = time.time()
-pop = 100
-MaxIter = 500
-dim = 30
-fl = -50
-ul = 50
-GbestPositon = tlbo(fun, MaxIter, pop, dim, fl, ul)
+pop = 100 #100
+MaxIter = 500 #500
+dim = 30 #30
+lower = -50
+upper = 50
+conver=[]
+history=[]
+fit_history=[]
+GbestPositon, conver, history, fit_history = tlbo(fun, MaxIter, pop, dim, lower, upper, conver,history,fit_history)
 GbestScore = fun(GbestPositon)
 time_end = time.time()
-
+#print('len=',len())
 print(f"The running time is: {time_end - time_start} s")
 print('The optimal value：', GbestScore)
 print('The optimal solution：', GbestPositon)
+plot_convergrnce(conver)
+plot_search_history(history)
+plot_fitness(fit_history)
