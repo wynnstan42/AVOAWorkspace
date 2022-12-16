@@ -275,11 +275,46 @@ def AVA(pop, dim, lb, ub, Max_iter, fun):
 
 
 def fun(X, func_num):
-    if func_num:
+    if func_num == 0:
         func_result = F1(X)
     return F2(X)
-
-
+def get_lower_upper_bound(func_num):
+    if func_num == 0 or func_num == 2 or func_num == 3 or func_num == 5:
+        lower = -100
+        upper = 100
+        return lower, upper
+    elif func_num == 1:
+        lower = -10
+        upper = 10
+        return lower, upper
+    elif func_num == 4:
+        lower = -30
+        upper = 30
+        return lower, upper
+    elif func_num == 6:
+        lower = -128
+        upper = 128
+        return lower, upper
+    elif func_num == 7:
+        lower = -500
+        upper = 500
+        return lower, upper
+    elif func_num == 8:
+        lower = -5.12
+        upper = 5.12
+        return lower, upper
+    elif func_num == 9:
+        lower = -32
+        upper = 32
+        return lower, upper
+    elif func_num == 10:
+        lower = -600
+        upper = 600
+        return lower, upper
+    elif func_num == 11 or func_num == 12:
+        lower = -50
+        upper = 50
+        return lower, upper
 
 Gbest_of_all = []
 runtime_list = []
@@ -292,8 +327,7 @@ for func_num in range(13):
         pop = 30  # Population size n 50
         MaxIter = 500  # Maximum number of iterations. 100
         dim = 30  # The dimension. 30
-        lower = -100  # The lower bound of the search interval.
-        upper = 100  # The upper bound of the search interval.
+        lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
         lb = lower * np.ones([dim, 1])
         ub = upper * np.ones([dim, 1])
         Curve, GbestPositon, GbestScore = AVA(pop, dim, lb, ub, MaxIter, fun)  # Afican Vulture Optimization Algorithm
