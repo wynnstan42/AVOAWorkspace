@@ -2,7 +2,7 @@ import math
 import random
 import time
 import numpy as np
-
+import pandas as pd
 # Benchmarks
 def F1(X):
     output = sum(np.square(X))
@@ -339,8 +339,12 @@ def get_lower_upper_bound(func_num):
         return lower, upper
 
 
-replication = 5
-for func_num in range(2):
+replication = 30
+result_list =[]
+runtime_list_out = []
+
+
+for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
     for i in range(replication):
@@ -364,4 +368,32 @@ for func_num in range(2):
           f"Best of Gbests={np.min(Gbest_of_all)}\n\tWorst of Gbests={np.max(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}\n\tSTD of Gbests={np.std(Gbest_of_all)}")
     print(f"Runtime Final Output: \n\tnumber of replications={replication}\n\taverage of Runtime={np.average(runtime_list)}\n\t"
           f"Best of Runtime={np.min(runtime_list)}\n\tWorst of Runtime={np.max(runtime_list)}\n\tSTD of Runtime={np.std(runtime_list)}")
+    temp_list_result = []
+    temp_list_runtime = []
+    str_func = 'F'+ str(func_num+1)
+    temp_list_result.append(str_func)
+    temp_list_result.append(np.average(Gbest_of_all))
+    temp_list_result.append(np.min(Gbest_of_all))
+    temp_list_result.append(np.max(Gbest_of_all))
+    temp_list_result.append(np.std(Gbest_of_all))
 
+    print(temp_list_result)
+
+    temp_list_runtime.append(str_func)
+    temp_list_runtime.append(np.average(runtime_list))
+    temp_list_runtime.append(np.min(runtime_list))
+    temp_list_runtime.append(np.max(runtime_list))
+    temp_list_runtime.append(np.std(runtime_list))
+
+    result_list.append(temp_list_result)
+    runtime_list_out.append(temp_list_runtime)
+
+print(np.array(runtime_list_out, dtype='object'))
+df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean', 'Best', 'Worst', 'STD'])
+df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Best', 'Worst', 'STD'])
+
+
+import os
+os.makedirs('folder/subfolder', exist_ok=True)
+df_result.to_csv('folder/subfolder/out.csv')
+df_runtime.to_csv('')
