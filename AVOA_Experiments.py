@@ -219,8 +219,7 @@ def AVA(pop, dim, lb, ub, Max_iter, fun, func_num):
 
     X = SortPosition(X, sortIndex)  # Sort the African Vultures population based on fitness
     GbestScore = fitness[0]  # Stores the optimal value for the current iteration.
-    GbestPositon = np.zeros([1, dim])
-    GbestPositon[0, :] = X[0, :]
+    GbestPositon = X[0, :][0]
     Curve = np.zeros([Max_iter, 1])
     Xnew = np.zeros([pop, dim])
     # Main iteration starts here
@@ -266,7 +265,7 @@ def AVA(pop, dim, lb, ub, Max_iter, fun, func_num):
         # Update global best solution
         if (Ybest[0] <= GbestScore):
             GbestScore = Ybest[0]
-            GbestPositon[0, :] = X[index[0], :]
+            GbestPositon = X[index[0], :][0]
         # print(GbestPositon)
         Curve[t] = GbestScore
     return Curve, GbestPositon, GbestScore
@@ -301,7 +300,7 @@ def fun(X, func_num):
         return F13(X)
 
 def get_lower_upper_bound(func_num):
-    if func_num == 0 or func_num == 2 or func_num == 3 or func_num == 5:
+    if func_num == 0:
         lower = -100
         upper = 100
         return lower, upper
@@ -309,9 +308,21 @@ def get_lower_upper_bound(func_num):
         lower = -10
         upper = 10
         return lower, upper
+    elif func_num == 2:
+        lower = -100
+        upper = 100
+        return lower, upper
+    elif func_num == 3:
+        lower = -100
+        upper = 100
+        return lower, upper
     elif func_num == 4:
         lower = -30
         upper = 30
+        return lower, upper
+    elif func_num == 5:
+        lower = -100
+        upper = 100
         return lower, upper
     elif func_num == 6:
         lower = -128
@@ -333,36 +344,40 @@ def get_lower_upper_bound(func_num):
         lower = -600
         upper = 600
         return lower, upper
-    elif func_num == 11 or func_num == 12:
+    elif func_num == 11:
+        lower = -50
+        upper = 50
+        return lower, upper
+    elif func_num == 12:
         lower = -50
         upper = 50
         return lower, upper
 
 
-replication = 30
+replication = 10
 result_list =[]
 runtime_list_out = []
 
-
-for func_num in range(13):
+for func_num in range(7,8):
     Gbest_of_all = []
     runtime_list = []
+    pop = 30  # Population size n 50
+    MaxIter = 500  # Maximum number of iterations. 100
+    dim = 30  # The dimension. 30
+    lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
+    lb = lower * np.ones([dim, 1])
+    ub = upper * np.ones([dim, 1])
     for i in range(replication):
         rng = np.random.default_rng()
         time_start = time.time()
-        pop = 30  # Population size n 50
-        MaxIter = 500  # Maximum number of iterations. 100
-        dim = 30  # The dimension. 30
-        lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
-        lb = lower * np.ones([dim, 1])
-        ub = upper * np.ones([dim, 1])
         Curve, GbestPositon, GbestScore = AVA(pop, dim, lb, ub, MaxIter, fun, func_num)  # Afican Vulture Optimization Algorithm
         time_end = time.time()
-        Gbest_of_all.append(fun(GbestPositon, func_num))
+        result = fun(GbestPositon, func_num)
+        Gbest_of_all.append(result)
         runtime = time_end - time_start
         print(f"【{i} round】\nThe running time is: {runtime} s")
         runtime_list.append(runtime)
-        print('The optimal value：', fun(GbestPositon[0], func_num), "\n=================================")
+        print('The optimal value：', result, "\n=================================")
     print(f'Benchmark: F {func_num+1}\n')
     print(f"Solution Final Output: \n\tnumber of replications={replication}\n\t"
           f"Best of Gbests={np.min(Gbest_of_all)}\n\tWorst of Gbests={np.max(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}\n\tSTD of Gbests={np.std(Gbest_of_all)}")
@@ -377,8 +392,6 @@ for func_num in range(13):
     temp_list_result.append(np.max(Gbest_of_all))
     temp_list_result.append(np.std(Gbest_of_all))
 
-    print(temp_list_result)
-
     temp_list_runtime.append(str_func)
     temp_list_runtime.append(np.average(runtime_list))
     temp_list_runtime.append(np.min(runtime_list))
@@ -388,12 +401,15 @@ for func_num in range(13):
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
 
-print(np.array(runtime_list_out, dtype='object'))
+    print(Gbest_of_all)
+
+print(np.array(result_list, dtype='object'))
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean', 'Best', 'Worst', 'STD'])
 df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Best', 'Worst', 'STD'])
 
-
 import os
-os.makedirs('folder/subfolder', exist_ok=True)
-df_result.to_csv('folder/subfolder/out.csv')
-df_runtime.to_csv('')
+os.makedirs('Data', exist_ok=True)
+df_result.to_csv('Data/avoa_result_output.csv')
+df_runtime.to_csv('Data/avoa_runtime_output.csv')
+
+
