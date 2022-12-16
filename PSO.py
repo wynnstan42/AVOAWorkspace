@@ -40,7 +40,7 @@ def F11(X):
     output = 1 / 4000 * sum(np.square(X)) - np.prod(
         [np.cos(a / (b + 1) ** (1 / 2)) for a, b in zip(X, list(range(len(X))))]) + 1
     return output
-def F12(X):  # TODO 怪怪的
+def F12(X):
     a = 10
     k = 100
     m = 4
@@ -57,7 +57,7 @@ def F12(X):  # TODO 怪怪的
         range(len(X) - 1)) + pow((1 + 1 / 4 * (X[len(X) - 1])), 2))
     output = pt1 + pt2
     return output
-def F13(X):  # TODO 這個也怪怪的
+def F13(X):
     a = 5
     k = 100
     m = 4
@@ -186,15 +186,16 @@ def plot_fitness(fit_history):
     plt.xlabel('Number of Iterations', fontsize=10)
     plt.ylabel('Fitness', fontsize=10)
     plt.xlim(-5, 200)
+    plt.ylim(0,10)
     plt.show()
 
 # Execute
 def fun(X):
     return F1(X)
 time_start = time.time()
-pop = 10  # Population size n 1000
+pop = 500  # Population size n 1000
 MaxIter = 100  # Maximum number of iterations. 500
-dim = 2  # The dimension. 30
+dim = 30  # The dimension. 30
 lower = -100  # The lower bound of the search interval. -100
 upper = 100  # The upper bound of the search interval. 100
 history=[]
