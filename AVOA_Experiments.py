@@ -274,26 +274,39 @@ def AVA(pop, dim, lb, ub, Max_iter, fun):
     return Curve, GbestPositon, GbestScore
 
 
-def fun(X):
+def fun(X, func_num):
+    if func_num:
+        func_result = F1(X)
     return F2(X)
 
 
-Gbest_of_all = []
-for i in range(30):
-    rng = np.random.default_rng()
-    time_start = time.time()
-    pop = 30  # Population size n 50
-    MaxIter = 500  # Maximum number of iterations. 100
-    dim = 30  # The dimension. 30
-    lower = -100  # The lower bound of the search interval.
-    upper = 100  # The upper bound of the search interval.
-    lb = lower * np.ones([dim, 1])
-    ub = upper * np.ones([dim, 1])
-    Curve, GbestPositon, GbestScore = AVA(pop, dim, lb, ub, MaxIter, fun)  # Afican Vulture Optimization Algorithm
-    time_end = time.time()
-    Gbest_of_all.append(fun(GbestPositon))
-    print(f"【{i} round】\nThe running time is: {time_end - time_start} s")
-    print('The optimal solution：', GbestPositon[0])
-    print('The optimal value：', fun(GbestPositon[0]), "\n=================================")
 
-print(f"Final Output: \n\tnumber of replications={len(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}")
+Gbest_of_all = []
+runtime_list = []
+iteration = 30
+
+for func_num in range(13):
+    for i in range(iteration):
+        rng = np.random.default_rng()
+        time_start = time.time()
+        pop = 30  # Population size n 50
+        MaxIter = 500  # Maximum number of iterations. 100
+        dim = 30  # The dimension. 30
+        lower = -100  # The lower bound of the search interval.
+        upper = 100  # The upper bound of the search interval.
+        lb = lower * np.ones([dim, 1])
+        ub = upper * np.ones([dim, 1])
+        Curve, GbestPositon, GbestScore = AVA(pop, dim, lb, ub, MaxIter, fun)  # Afican Vulture Optimization Algorithm
+        time_end = time.time()
+        Gbest_of_all.append(fun(GbestPositon))
+        runtime = time_end - time_start
+        print(f"【{i} round】\nThe running time is: {runtime} s")
+        runtime_list.append(runtime)
+        print('The optimal solution：', GbestPositon[0])
+        print('The optimal value：', fun(GbestPositon[0]), "\n=================================")
+
+
+print(f"Solution Final Output: \n\tnumber of replications={iteration}\n\t"
+      f"Best of Gbests={np.min(Gbest_of_all)}\n\tWorst of Gbests={np.max(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}\n\tSTD of Gbests={np.std(Gbest_of_all)}")
+print(f"Runtime Final Output: \n\tnumber of replications={iteration}\n\taverage of Runtime={np.average(runtime_list)}\n\t"
+      f"Best of Runtime={np.min(runtime_list)}\n\tWorst of Runtime={np.max(runtime_list)}\n\tSTD of Runtime={np.std(runtime_list)}")
