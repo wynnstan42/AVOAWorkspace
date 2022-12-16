@@ -1,9 +1,7 @@
 import math
 import random
 import time
-
 import numpy as np
-
 
 # Benchmarks
 def F1(X):
@@ -111,8 +109,8 @@ def initial(pop, dim, ub, lb):
 
 
 # Calculate fitness values for each Vulture
-def CaculateFitness1(X, fun):
-    fitness = fun(X)
+def CaculateFitness1(X, fun, func_num):
+    fitness = fun(X, func_num)
     return fitness
 
 
@@ -206,7 +204,7 @@ def levyFlight(d):
     return o
 
 
-def AVA(pop, dim, lb, ub, Max_iter, fun):
+def AVA(pop, dim, lb, ub, Max_iter, fun, func_num):
     alpha = 0.8
     betha = 0.2
     p1 = 0.6
@@ -216,7 +214,7 @@ def AVA(pop, dim, lb, ub, Max_iter, fun):
     X = initial(pop, dim, lb, ub)  # Initialize the random population
     fitness = np.zeros([pop, 1])
     for i in range(pop):
-        fitness[i] = CaculateFitness1(X[i, :], fun)
+        fitness[i] = CaculateFitness1(X[i, :], fun, func_num)
     fitness, sortIndex = SortFitness(fitness)  # Sort the fitness values of African Vultures
 
     X = SortPosition(X, sortIndex)  # Sort the African Vultures population based on fitness
@@ -249,7 +247,7 @@ def AVA(pop, dim, lb, ub, Max_iter, fun):
 
             Xnew[i, :] = current_vulture_X[0]
             Xnew[i, :] = BorderCheck1(Xnew[i, :], lb, ub, dim)
-            tempFitness = CaculateFitness1(Xnew[i, :], fun)
+            tempFitness = CaculateFitness1(Xnew[i, :], fun, func_num)
             # Update local best solution
             if (tempFitness <= fitness[i]):
                 fitness[i] = tempFitness
@@ -276,8 +274,32 @@ def AVA(pop, dim, lb, ub, Max_iter, fun):
 
 def fun(X, func_num):
     if func_num == 0:
-        func_result = F1(X)
-    return F2(X)
+        return F1(X)
+    elif func_num == 1:
+        return F2(X)
+    elif func_num == 2:
+        return F3(X)
+    elif func_num == 3:
+        return F4(X)
+    elif func_num == 4:
+        return F5(X)
+    elif func_num == 5:
+        return F6(X)
+    elif func_num == 6:
+        return F7(X)
+    elif func_num == 7:
+        return F8(X)
+    elif func_num == 8:
+        return F9(X)
+    elif func_num == 9:
+        return F10(X)
+    elif func_num == 10:
+        return F11(X)
+    elif func_num == 11:
+        return F12(X)
+    elif func_num == 12:
+        return F13(X)
+
 def get_lower_upper_bound(func_num):
     if func_num == 0 or func_num == 2 or func_num == 3 or func_num == 5:
         lower = -100
@@ -316,12 +338,12 @@ def get_lower_upper_bound(func_num):
         upper = 50
         return lower, upper
 
-Gbest_of_all = []
-runtime_list = []
-iteration = 30
 
-for func_num in range(13):
-    for i in range(iteration):
+replication = 5
+for func_num in range(2):
+    Gbest_of_all = []
+    runtime_list = []
+    for i in range(replication):
         rng = np.random.default_rng()
         time_start = time.time()
         pop = 30  # Population size n 50
@@ -330,17 +352,16 @@ for func_num in range(13):
         lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
         lb = lower * np.ones([dim, 1])
         ub = upper * np.ones([dim, 1])
-        Curve, GbestPositon, GbestScore = AVA(pop, dim, lb, ub, MaxIter, fun)  # Afican Vulture Optimization Algorithm
+        Curve, GbestPositon, GbestScore = AVA(pop, dim, lb, ub, MaxIter, fun, func_num)  # Afican Vulture Optimization Algorithm
         time_end = time.time()
-        Gbest_of_all.append(fun(GbestPositon))
+        Gbest_of_all.append(fun(GbestPositon, func_num))
         runtime = time_end - time_start
         print(f"【{i} round】\nThe running time is: {runtime} s")
         runtime_list.append(runtime)
-        print('The optimal solution：', GbestPositon[0])
-        print('The optimal value：', fun(GbestPositon[0]), "\n=================================")
+        print('The optimal value：', fun(GbestPositon[0], func_num), "\n=================================")
+    print(f'Benchmark: F {func_num+1}\n')
+    print(f"Solution Final Output: \n\tnumber of replications={replication}\n\t"
+          f"Best of Gbests={np.min(Gbest_of_all)}\n\tWorst of Gbests={np.max(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}\n\tSTD of Gbests={np.std(Gbest_of_all)}")
+    print(f"Runtime Final Output: \n\tnumber of replications={replication}\n\taverage of Runtime={np.average(runtime_list)}\n\t"
+          f"Best of Runtime={np.min(runtime_list)}\n\tWorst of Runtime={np.max(runtime_list)}\n\tSTD of Runtime={np.std(runtime_list)}")
 
-
-print(f"Solution Final Output: \n\tnumber of replications={iteration}\n\t"
-      f"Best of Gbests={np.min(Gbest_of_all)}\n\tWorst of Gbests={np.max(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}\n\tSTD of Gbests={np.std(Gbest_of_all)}")
-print(f"Runtime Final Output: \n\tnumber of replications={iteration}\n\taverage of Runtime={np.average(runtime_list)}\n\t"
-      f"Best of Runtime={np.min(runtime_list)}\n\tWorst of Runtime={np.max(runtime_list)}\n\tSTD of Runtime={np.std(runtime_list)}")
