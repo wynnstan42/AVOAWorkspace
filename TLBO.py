@@ -5,43 +5,66 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 # Benchmarks
 def F1(X):
     output = sum(np.square(X))
     return output
+
+
 def F2(X):
     output = np.sum(np.abs(X)) + np.prod(np.abs(X))
     return output
+
+
 def F3(X):
     output = sum(np.square(X[j]) for i in range(len(X)) for j in range(i + 1))
     return output
+
+
 def F4(X):
     output = max(np.abs(X))
     return output
+
+
 def F5(X):
     output = sum(100 * np.square(X[i + 1] - np.square(X[i])) + np.square(X[i] - 1) for i in range(len(X) - 1))
     return output
+
+
 def F6(X):
     output = sum(np.square(abs(i + 0.5)) for i in X)
     return output
+
+
 def F7(X):
     output = sum((i + 1) * pow(X[i], 4) for i in range(len(X))) + random.random()
     return output
+
+
 def F8(X):
     output = sum(-(X * np.sin(np.sqrt(np.abs(X)))))
     return output
+
+
 def F9(X):
     output = 10 * len(X) + sum(pow(X[i], len(X)) - 10 * np.cos(2 * np.pi * X[i]) for i in range(len(X)))
     return output
+
+
 def F10(X):
     output = -20 * np.exp(-0.2 * np.sqrt(1 / len(X) * sum(np.square(X)))) - np.exp(
         1 / len(X) * sum(np.cos(2 * np.pi * X[i]) for i in range(len(X)))) + 20 + np.exp(1)
     return output
+
+
 def F11(X):
     output = 1 / 4000 * sum(np.square(X)) - np.prod(
         [np.cos(a / (b + 1) ** (1 / 2)) for a, b in zip(X, list(range(len(X))))]) + 1
     return output
-def F12(X):  # TODO 怪怪的
+
+
+def F12(X):
     a = 10
     k = 100
     m = 4
@@ -58,7 +81,9 @@ def F12(X):  # TODO 怪怪的
         range(len(X) - 1)) + pow((1 + 1 / 4 * (X[len(X) - 1])), 2))
     output = pt1 + pt2
     return output
-def F13(X):  # TODO 這個也怪怪的
+
+
+def F13(X):
     a = 5
     k = 100
     m = 4
@@ -215,34 +240,34 @@ def tlbo(fitness, max_iter, n, dim, minx, maxx, conver, history, fit_history):
         # Convergence
         conver.append(Fbest)
         # Average fitness
-        sum=0
+        sum = 0
         for i in range(len(classroom)):
-            sum=sum+classroom[i].fitness
-        ave=sum/len(classroom)
+            sum = sum + classroom[i].fitness
+        ave = sum / len(classroom)
         fit_history.append(ave)
-        #search history
+        # search history
         for n in range(len(classroom)):
             history.append(classroom[n].position)
         # -----------King--------------------#
 
-
     # end-while
 
     # return best student from classroom
-    return Xbest , conver, history ,fit_history
+    return Xbest, conver, history, fit_history
 
 
 # end teaching learning based optimization
 
 def plot_convergrnce(Curve):
     ig, ax = plt.subplots()
-    ax.plot(Curve,color='dodgerblue', marker='o', markeredgecolor='dodgerblue', markerfacecolor='dodgerblue')
-    ax.set_xlabel('Number of Iterations',fontsize=10)
-    ax.set_ylabel('Fitness',fontsize=10)
-    ax.set_xlim(-5,200)
+    ax.plot(Curve, color='dodgerblue', marker='o', markeredgecolor='dodgerblue', markerfacecolor='dodgerblue')
+    ax.set_xlabel('Number of Iterations', fontsize=10)
+    ax.set_ylabel('Fitness', fontsize=10)
+    ax.set_xlim(-5, 200)
     ax.set_title('Convergence curve')
     plt.savefig('image.jpg', format='jpg')
     plt.show()
+
 
 def plot_search_history(history):
     for i in range(len(history)):
@@ -252,6 +277,7 @@ def plot_search_history(history):
             plt.ylim(lower, upper)
     plt.title('Search history')
     plt.show()
+
 
 def plot_fitness(fit_history):
     plt.plot(fit_history, color='b', marker='o', linewidth=2, markersize=6)
@@ -265,19 +291,21 @@ def plot_fitness(fit_history):
 # Execute
 def fun(X):
     return F13(X)
+
+
 time_start = time.time()
-pop = 100 #100
-MaxIter = 500 #500
-dim = 30 #30
+pop = 100  # 100
+MaxIter = 500  # 500
+dim = 30  # 30
 lower = -50
 upper = 50
-conver=[]
-history=[]
-fit_history=[]
-GbestPositon, conver, history, fit_history = tlbo(fun, MaxIter, pop, dim, lower, upper, conver,history,fit_history)
+conver = []
+history = []
+fit_history = []
+GbestPositon, conver, history, fit_history = tlbo(fun, MaxIter, pop, dim, lower, upper, conver, history, fit_history)
 GbestScore = fun(GbestPositon)
 time_end = time.time()
-#print('len=',len())
+# print('len=',len())
 print(f"The running time is: {time_end - time_start} s")
 print('The optimal value：', GbestScore)
 print('The optimal solution：', GbestPositon)

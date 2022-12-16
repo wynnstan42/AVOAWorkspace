@@ -1,9 +1,8 @@
 import math
+import random
+import time
 
 import numpy as np
-import random
-import matplotlib.pyplot as plt
-import time
 
 
 # Benchmarks
@@ -103,7 +102,7 @@ def F13(X):
 
 
 # AVOA
-def initial(pop, dim, ub, lb):
+def initializeVultures(pop, dim, ub, lb):
     X = np.zeros([pop, dim])
     for i in range(pop):
         for j in range(dim):
@@ -111,29 +110,25 @@ def initial(pop, dim, ub, lb):
     return X
 
 
-# Calculate fitness values for each Vulture
-def CaculateFitness1(X, fun):
-    fitness = fun(X)
+def caculateFitness(X, func):
+    fitness = func(X)
     return fitness
 
 
-# Sort fitness.
-def SortFitness(Fit):
+def sortFitness(Fit):
     fitness = np.sort(Fit, axis=0)
     index = np.argsort(Fit, axis=0)
     return fitness, index
 
 
-# Sort the position of the Vulture according to fitness.
-def SortPosition(X, index):
+def sortPosition(X, index):
     Xnew = np.zeros(X.shape)
     for i in range(X.shape[0]):
         Xnew[i, :] = X[index[i], :]
     return Xnew
 
 
-# Boundary detection function.
-def BorderCheck1(X, lb, ub, dim):
+def boundaryCheck(X, lb, ub, dim):
     for j in range(dim):
         if X[j] < lb[j]:
             X[j] = ub[j]
@@ -142,207 +137,151 @@ def BorderCheck1(X, lb, ub, dim):
     return X
 
 
-def rouletteWheelSelection(x):
-    CS = np.cumsum(x)
-    Random_value = random.random()
-    index = np.where(Random_value <= CS)
-    index = sum(index)
-    return index
-
-
-def random_select(Pbest_Vulture_1, Pbest_Vulture_2, alpha, betha):
-    probabilities = [alpha, betha]
-    index = rouletteWheelSelection(probabilities)
-    if (index.all() > 0):
-        random_vulture_X = Pbest_Vulture_1
+def rouletteWheelSelection(first_best_vulture, second_best_vulture, L1, L2):
+    # equation(1)
+    probability = [L1, L2]
+    index = sum(np.where(random.random() <= np.cumsum([probability])))
+    if index.all() > 0:
+        target_vulture = first_best_vulture
     else:
-        random_vulture_X = Pbest_Vulture_2
-    return random_vulture_X
+        target_vulture = second_best_vulture
+    return target_vulture
 
 
-def exploration(current_vulture_X, random_vulture_X, F, p1, upper_bound, lower_bound):
-    if random.random() < p1:
-        current_vulture_X = random_vulture_X - (abs((2 * random.random()) * random_vulture_X - current_vulture_X)) * F
-    else:
-        current_vulture_X = (random_vulture_X - (F) + random.random() * (
-                    (upper_bound - lower_bound) * random.random() + lower_bound))
-    return current_vulture_X
+def explorationPhase(current_vulture, target_vulture, F, p1, upper_bound, lower_bound):
+    if p1 > random.random():  # Behavior 1
+        current_vulture = target_vulture - (abs((2 * random.random()) * target_vulture - current_vulture)) * F
+    else:  # Behavior 2
+        current_vulture = (target_vulture - F + random.random() * (
+                (upper_bound - lower_bound) * random.random() + lower_bound))
+    return current_vulture
 
 
-def exploitation(current_vulture_X, Best_vulture1_X, Best_vulture2_X, random_vulture_X, F, p2, p3, variables_no,
-                 upper_bound, lower_bound):
-    if abs(F) < 0.5:
+def exploitationPhase(current_vulture, first_best_vulture, second_best_vulture, target_vulture, F, p2, p3, dim):
 
-        if random.random() < p2:
-            A = Best_vulture1_X - ((np.multiply(Best_vulture1_X, current_vulture_X)) / (
-                        Best_vulture1_X - current_vulture_X ** 2)) * F
-            B = Best_vulture2_X - (
-                        (Best_vulture2_X * current_vulture_X) / (Best_vulture2_X - current_vulture_X ** 2)) * F
-            current_vulture_X = (A + B) / 2
-        else:
-            current_vulture_X = random_vulture_X - abs(random_vulture_X - current_vulture_X) * F * levyFlight(
-                variables_no)
+    if abs(F) >= 0.5:  # Exploitation Phase I
 
-    if random.random() >= 0.5:
-        if random.random() < p3:
-            current_vulture_X = (abs((2 * random.random()) * random_vulture_X - current_vulture_X)) * (
-                        F + random.random()) - (random_vulture_X - current_vulture_X)
+        if p2 >= random.random():  # Behavior 3
+            # equation(10)
+            current_vulture = (abs((2 * random.random()) * target_vulture - current_vulture)) * (
+                    F + random.random()) - (target_vulture - current_vulture)
 
-        else:
-            s1 = random_vulture_X * (random.random() * current_vulture_X / (2 * np.pi)) * np.cos(current_vulture_X)
-            s2 = random_vulture_X * (random.random() * current_vulture_X / (2 * np.pi)) * np.sin(current_vulture_X)
-            current_vulture_X = random_vulture_X - (s1 + s2)
-    return current_vulture_X
+        else:  # Behavior 4
+            # equation(13)
+            s1 = target_vulture * (random.random() * current_vulture / (2 * np.pi)) * np.cos(current_vulture)
+            s2 = target_vulture * (random.random() * current_vulture / (2 * np.pi)) * np.sin(current_vulture)
+            current_vulture = target_vulture - (s1 + s2)
+
+    else:  # Exploitation Phase II
+
+        if p3 >= random.random():  # Behavior 5
+            # equation(16)
+            # A1 = first_best_vulture - ((np.multiply(first_best_vulture, current_vulture)) / (first_best_vulture - current_vulture ** 2)) * F
+            A1 = first_best_vulture - ((first_best_vulture * current_vulture) / (first_best_vulture - current_vulture ** 2)) * F
+            A2 = second_best_vulture - ((second_best_vulture * current_vulture) / (second_best_vulture - current_vulture ** 2)) * F
+            current_vulture = (A1 + A2) / 2
+
+        else:  # Behavior 6
+            current_vulture = target_vulture - abs(target_vulture - current_vulture) * F * levyFlight(dim)
+
+    return current_vulture
+
+def levyFlight(dim):  # equation(18)
+    beta = 1.5
+    sigma = (math.gamma(1 + beta) * np.sin(np.pi * beta / 2) / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))) ** (1 / beta)
+    u = np.random.randn(1, dim)
+    v = np.random.randn(1, dim)
+    LF = u * sigma / abs(v) ** (1 / beta)
+    return LF
 
 
-# eq (18)
-def levyFlight(d):
-    beta = 3 / 2
-    sigma = (math.gamma(1 + beta) * np.sin(np.pi * beta / 2) / (
-                math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))) ** (1 / beta)
-    u = np.random.randn(1, d) * sigma
-    v = np.random.randn(1, d)
-    step = u / abs(v) ** (1 / beta)
-    o = step
-    return o
+def AVOA(pop, dim, lb, ub, max_iterations, func):
 
-
-def AVA(pop, dim, lb, ub, Max_iter, fun, history, fit_history):
-    alpha = 0.8
-    betha = 0.2
+    # Set Params
+    L1 = 0.8
+    L2 = (1 - L1)
     p1 = 0.6
     p2 = 0.4
     p3 = 0.6
     Gama = 2.5
-    X = initial(pop, dim, lb, ub)  # Initialize the random population
-    fitness = np.zeros([pop, 1])
-    for i in range(pop):
-        fitness[i] = CaculateFitness1(X[i, :], fun)
-    fitness, sortIndex = SortFitness(fitness)  # Sort the fitness values of African Vultures
 
-    X = SortPosition(X, sortIndex)  # Sort the African Vultures population based on fitness
-    GbestScore = fitness[0]  # Stores the optimal value for the current iteration.
-    GbestPositon = np.zeros([1, dim])
-    GbestPositon[0, :] = X[0, :]
-    Curve = np.zeros([Max_iter, 1])
+    # 【Initialize】
+    X = initializeVultures(pop, dim, lb, ub)  # Initialize random vultures
+    fitness = np.zeros([pop, 1])
+
+    # 【Evaluate Vultures】*for the initial vultures
+    for i in range(pop):
+        fitness[i] = caculateFitness(X[i, :], func)
+    fitness, sortIndex = sortFitness(fitness)  # Sort the fitness values of African Vultures
+    X = sortPosition(X, sortIndex)  # Sort the African Vultures population based on fitness
+    gBestFitness = fitness[0]  # Stores the optimal value for the current iteration.
+    gBestPositon = X[0, :][0]
     Xnew = np.zeros([pop, dim])
-    # Main iteration starts here
-    for t in range(Max_iter):
-        Pbest_Vulture_1 = X[0, :]  # location of Vulture (First best location Best Vulture Category 1)
-        Pbest_Vulture_2 = X[1, :]  # location of Vulture (Second best location Best Vulture Category 1)
-        t3 = np.random.uniform(-2, 2, 1) * (
-                    (np.sin((np.pi / 2) * (t / Max_iter)) ** Gama) + np.cos((np.pi / 2) * (t / Max_iter)) - 1)
-        z = random.randint(-1, 0)
-        # F= (2*random.random()+1)*z*(1-(t/Max_iter))+t3
-        P1 = (2 * random.random() + 1) * (1 - (t / Max_iter)) + t3
-        F = P1 * (2 * random.random() - 1)
-        # For each vulture Pi
+
+    # Start Iterating
+    for current_iter in range(max_iterations):
+        # 【Find Best Vultures】
+        first_best_vulture = X[0, :]  # First Best Vulture
+        second_best_vulture = X[1, :]  # Second Best Vulture
+
+        # loop each vulture
         for i in range(pop):
             current_vulture_X = X[i, :]
-            random_vulture_X = random_select(Pbest_Vulture_1, Pbest_Vulture_2, alpha,
-                                             betha)  # select random vulture using eq(1)
-            if abs(F) >= 1:
-                current_vulture_X = exploration(current_vulture_X, random_vulture_X, F, p1, ub, lb)  # eq (16) & (17)
 
-            else:
-                current_vulture_X = exploitation(current_vulture_X, Pbest_Vulture_1, Pbest_Vulture_2, random_vulture_X,
-                                                 F, p2, p3, dim, ub, lb)  # eq (10) & (13)
+            # 【Select Target Vulture】
+            target_vulture = rouletteWheelSelection(first_best_vulture, second_best_vulture, L1, L2)
 
+            # 【Calculate Starvation Rate F】
+            # equation(3)
+            t = np.random.uniform(-2, 2) * (
+                    (np.sin((np.pi / 2) * (current_iter / max_iterations)) ** Gama)
+                    + np.cos((np.pi / 2) * (current_iter / max_iterations))
+                    - 1)
+            # equation(4)
+            F = (2 * random.random() + 1) * np.random.uniform(-1, 1) * (1 - (current_iter / max_iterations)) + t
+
+            # 【Update Position】
+            if abs(F) >= 1:  # Exploration Phase (|F|>1)
+                current_vulture_X = explorationPhase(current_vulture_X, target_vulture, F, p1, ub, lb)
+
+            else:  # Exploitation Phase (|F|<=1)
+                current_vulture_X = exploitationPhase(current_vulture_X, first_best_vulture, second_best_vulture, target_vulture, F, p2, p3, dim)
+
+            # Evaluate new position
             Xnew[i, :] = current_vulture_X[0]
-            Xnew[i, :] = BorderCheck1(Xnew[i, :], lb, ub, dim)
-            tempFitness = CaculateFitness1(Xnew[i, :], fun)
-            # Update local best solution
-            if (tempFitness <= fitness[i]):
+            Xnew[i, :] = boundaryCheck(Xnew[i, :], lb, ub, dim)
+            tempFitness = caculateFitness(Xnew[i, :], func)
+
+            # Update personal best
+            if tempFitness <= fitness[i]:
                 fitness[i] = tempFitness
                 X[i, :] = Xnew[i, :]
-        Ybest, index = SortFitness(fitness)
-        X = SortPosition(X, index)
-        # print('fitness',fitness)
-        # -----------King--------------------#
-        # history.append(X)
-        # for i in range(len(fitness)):
-        #     ave = np.average(fitness)
-        # fit_history.append(ave)
-        # print('ave=',ave)
-        # -----------King--------------------#
 
-        # Update global best solution
-        if (Ybest[0] <= GbestScore):
-            GbestScore = Ybest[0]
-            GbestPositon[0, :] = X[index[0], :]
-        # print(GbestPositon)
-        Curve[t] = GbestScore
-    return Curve, GbestPositon, GbestScore, history, fit_history
+        # Update global best
+        yBest, index = sortFitness(fitness)
+        X = sortPosition(X, index)
+        if yBest[0] <= gBestFitness:
+            gBestFitness = yBest[0]
+            gBestPositon = X[index[0], :][0]
+
+    return gBestPositon, gBestFitness
 
 
-def fun(X):
+def func(X):
     return F2(X)
 
 
-# rng = np.random.default_rng()
-# time_start = time.time()
-# pop = 30  # Population size n 50
-# MaxIter = 500  # Maximum number of iterations. 100
-# dim = 30  # The dimension. 30
-# lower = -100  # The lower bound of the search interval.
-# upper = 100  # The upper bound of the search interval.
-# history = []
-# fit_history = []
-# lb = lower * np.ones([dim, 1])
-# ub = upper * np.ones([dim, 1])
-# Curve, GbestPositon, GbestScore, history, fit_history = AVA(pop, dim, lb, ub, MaxIter, fun, history,
-#                                                             fit_history)  # Afican Vulture Optimization Algorithm
-# time_end = time.time()
-# print(f"The running time is: {time_end - time_start} s")
-# print('The optimal value：', GbestScore)
+pop = 30  # Population size
+MaxIter = 500  # Maximum number of iterations
+dim = 30  # Dimensions
+lower_bound = -100  # Lower bound of the benchmark
+upper_bound = 100  # Upper bound of the benchmark
+lower_bounds = lower_bound * np.ones([dim, 1])
+upper_bounds = upper_bound * np.ones([dim, 1])
 
-Gbest_of_all = []
-for i in range(30):
-    rng = np.random.default_rng()
-    time_start = time.time()
-    pop = 30  # Population size n 50
-    MaxIter = 500  # Maximum number of iterations. 100
-    dim = 30  # The dimension. 30
-    lower = -100  # The lower bound of the search interval.
-    upper = 100  # The upper bound of the search interval.
-    history = []
-    fit_history = []
-    lb = lower * np.ones([dim, 1])
-    ub = upper * np.ones([dim, 1])
-    Curve, GbestPositon, GbestScore, history, fit_history = AVA(pop, dim, lb, ub, MaxIter, fun, history,
-                                                                fit_history)  # Afican Vulture Optimization Algorithm
-    time_end = time.time()
-    Gbest_of_all.append(fun(GbestPositon))
-    print(f"【{i} round】\nThe running time is: {time_end - time_start} s")
-    print('The optimal solution：', GbestPositon[0])
-    print('The optimal value：', fun(GbestPositon[0]), "\n=================================")
-
-print(f"Final Output: \n\tnumber of replications={len(Gbest_of_all)}\n\taverage of Gbests={np.average(Gbest_of_all)}")
-# print('The optimal solution：', GbestPositon)
-# print('search history:',history)
-# print('fit history:', fit_history)
-
-# for i in range(len(history)):
-#     for n in range(len(history[0])):
-#         plt.scatter(history[i][n][0], history[i][n][1], c="black", alpha=0.3, facecolor='white', )
-#         plt.xlim(lower, upper)
-#         plt.ylim(lower, upper)
-# plt.title('Search history')
-# plt.show()
-#
-# plt.plot(fit_history, color='b', marker='o', linewidth=2, markersize=6)
-# plt.title('Average fitness of all Vultures')
-# plt.xlabel('Number of Iterations', fontsize=10)
-# plt.ylabel('Fitness', fontsize=10)
-# plt.xlim(-5, 200)
-# plt.show()
-#
-# ig, ax = plt.subplots()
-# ax.plot(Curve, color='dodgerblue', marker='o', markeredgecolor='dodgerblue', markerfacecolor='dodgerblue')
-# ax.set_xlabel('Number of Iterations', fontsize=10)
-# ax.set_ylabel('Fitness', fontsize=10)
-# ax.set_xlim(-5, 200)
-# ax.set_ylim(0, 10)
-# ax.set_title('Convergence curve')
-# plt.savefig('image.jpg', format='jpg')
-# plt.show()
+time_start = time.time()
+gBestPositon, gBestScore = AVOA(pop, dim, lower_bounds, upper_bounds, MaxIter, func)  # AVOA
+time_end = time.time()
+print(f"The running time is: {time_end - time_start} s")
+print('The optimal value：', gBestScore)
+print('The optimal solution：', gBestPositon)
