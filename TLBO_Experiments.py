@@ -416,8 +416,8 @@ df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'),
 
 import os
 os.makedirs('Data', exist_ok=True)
-df_result.to_csv('Data/tlbo_result_output.csv')
-df_runtime.to_csv('Data/tlbo_runtime_output.csv')
+df_result.to_csv('Data/tlbo_result_output_100.csv')
+df_runtime.to_csv('Data/tlbo_runtime_output_100.csv')
 
 # plot_convergrnce(conver)
 # plot_search_history(history)

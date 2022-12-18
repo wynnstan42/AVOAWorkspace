@@ -273,7 +273,8 @@ def get_lower_upper_bound(func_num):
         return lower, upper
 
 
-replication = 30
+replication = 10
+
 result_list =[]
 runtime_list_out = []
 
@@ -282,8 +283,8 @@ for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
     pop = 500  # Population size n 1000
-    MaxIter = 500  # Maximum number of iterations. 500
-    dim = 30  # The dimension. 30
+    MaxIter = 300  # Maximum number of iterations. 500
+    dim = 100  # The dimension. 30
     lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
     for i in range(replication):
         time_start = time.time()
@@ -308,16 +309,18 @@ for func_num in range(13):
     temp_list_result = []
     temp_list_runtime = []
     str_func = 'F' + str(func_num + 1)
+    temp_list_result.append(str_func)
+
     mean = np.mean(Gbest_of_all)
     standard_deviation = np.std(Gbest_of_all)
     distance_from_mean = abs(Gbest_of_all - mean)
     max_deviations = 3
     not_outlier = distance_from_mean < max_deviations * standard_deviation
-    no_outliers = Gbest_of_all[not_outlier]
+    no_outliers = np.array(Gbest_of_all)[not_outlier]
+    no_outliers_list = no_outliers.tolist()
 
-    temp_list_result.append(str_func)
     temp_list_result.append(mean)
-    temp_list_result.append(no_outliers)
+    temp_list_result.append(np.mean(no_outliers_list))
     temp_list_result.append(np.median(Gbest_of_all))
     temp_list_result.append(np.min(Gbest_of_all))
     temp_list_result.append(np.max(Gbest_of_all))
@@ -336,13 +339,11 @@ for func_num in range(13):
     print(Gbest_of_all)
 
 print(np.array(result_list, dtype='object'))
-df_result = pd.DataFrame(np.array(result_list, dtype='object'),
-                         columns=['Benchmark', 'Mean', 'Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
-df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'),
-                          columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
+df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
+df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
 
 import os
 os.makedirs('Data', exist_ok=True)
-df_result.to_csv('Data/pso_result_output_30.csv')
-df_runtime.to_csv('Data/pso_runtime_output_30.csv')
+df_result.to_csv('Data/pso_result_output_100_2.csv')
+df_runtime.to_csv('Data/pso_runtime_output_100_2.csv')
 
