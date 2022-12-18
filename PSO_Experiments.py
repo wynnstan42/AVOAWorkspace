@@ -273,8 +273,7 @@ def get_lower_upper_bound(func_num):
         return lower, upper
 
 
-replication = 10
-
+replication = 1
 result_list =[]
 runtime_list_out = []
 

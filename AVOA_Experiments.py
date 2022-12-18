@@ -354,16 +354,16 @@ def get_lower_upper_bound(func_num):
         return lower, upper
 
 
-replication = 30
+replication = 1
 result_list =[]
 runtime_list_out = []
 
-for func_num in range(13):
+for func_num in range(1):
     Gbest_of_all = []
     runtime_list = []
     pop = 30  # Population size n 50
     MaxIter = 500  # Maximum number of iterations. 100
-    dim = 100  # The dimension. 30
+    dim = 30  # The dimension. 30
     lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
     lb = lower * np.ones([dim, 1])
     ub = upper * np.ones([dim, 1])
@@ -421,7 +421,7 @@ df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['
 
 import os
 os.makedirs('Data', exist_ok=True)
-df_result.to_csv('Data/avoa_result_output_500.csv')
-df_runtime.to_csv('Data/avoa_runtime_output_500.csv')
+# df_result.to_csv('Data/avoa_result_output_500.csv')
+# df_runtime.to_csv('Data/avoa_runtime_output_500.csv')
 
 
