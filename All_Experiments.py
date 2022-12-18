@@ -591,10 +591,10 @@ def get_lower_upper_bound(func_num):
         return lower, upper
 
 #AVOA 30
-replication = 1
+replication = 10
 result_list =[]
 runtime_list_out = []
-for func_num in range(1):
+for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
     pop = 30  # Population size n 50
@@ -668,10 +668,10 @@ df_runtime.to_csv('Data/avoa_runtime_output_30.csv')
 df_replication.to_csv('Data/avoa_replication_output_30.csv')
 
 #AVOA 100
-replication = 1
+replication = 10
 result_list =[]
 runtime_list_out = []
-for func_num in range(1):
+for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
     pop = 30  # Population size n 50
@@ -745,11 +745,11 @@ df_runtime.to_csv('Data/avoa_runtime_output_100.csv')
 df_replication.to_csv('Data/avoa_replication_output_100.csv')
 
 #PSO 30
-replication = 1
+replication = 10
 result_list =[]
 runtime_list_out = []
 
-for func_num in range(1):
+for func_num in range(13):
     print(f"Benchmark: {func_num+1}")
     Gbest_of_all = []
     runtime_list = []
@@ -824,11 +824,11 @@ df_runtime.to_csv('Data/pso_runtime_output_30.csv')
 df_replication.to_csv('Data/pso_replication_output_30.csv')
 
 #PSO 100
-replication = 1
+replication = 10
 result_list =[]
 runtime_list_out = []
 
-for func_num in range(1):
+for func_num in range(13):
     print(f"Benchmark: {func_num+1}")
     Gbest_of_all = []
     runtime_list = []
@@ -903,11 +903,11 @@ df_runtime.to_csv('Data/pso_runtime_output_100.csv')
 df_replication.to_csv('Data/pso_replication_output_100.csv')
 
 #TLBO 30
-replication = 1
+replication = 10
 result_list =[]
 runtime_list_out = []
 
-for func_num in range(1):
+for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
     pop = 100 #100
@@ -979,11 +979,11 @@ df_runtime.to_csv('Data/tlbo_runtime_output_30.csv')
 df_replication.to_csv('Data/tlbo_replication_output_30.csv')
 
 #TLBO 100
-replication = 1
+replication = 10
 result_list =[]
 runtime_list_out = []
 
-for func_num in range(1):
+for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
     pop = 100 #100
