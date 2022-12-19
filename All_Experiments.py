@@ -593,8 +593,9 @@ def get_lower_upper_bound(func_num):
 #AVOA 30
 replication = 10
 result_list =[]
+Gbest_of_each = []
 runtime_list_out = []
-for func_num in range(13):
+for func_num in range(2):
     Gbest_of_all = []
     runtime_list = []
     pop = 30  # Population size n 50
@@ -649,15 +650,17 @@ for func_num in range(13):
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
 
-Gbest_of_each = []
-Gbest_of_each.append(Gbest_of_all)
+    Gbest_of_all.append(str_func)
+    Gbest_of_each.append(Gbest_of_all)
 # print(f'result_list: {result_list}')
 # print(f'Gbest_of_each: {Gbest_of_each}')
+
 col_list = []
-for i in range(len(Gbest_of_all)):
+for i in range(replication):
     col_list.append(str(i+1))
+col_list.append('Benchmark')
 df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns= col_list)
-# print(df_replication)
+print(df_replication)
 # print(np.array(result_list, dtype='object'))
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
 df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
@@ -671,6 +674,7 @@ df_replication.to_csv('Data/avoa_replication_output_30.csv')
 replication = 10
 result_list =[]
 runtime_list_out = []
+Gbest_of_each = []
 for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
@@ -726,14 +730,17 @@ for func_num in range(13):
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
 
-Gbest_of_each = []
-Gbest_of_each.append(Gbest_of_all)
+    Gbest_of_all.append(str_func)
+    Gbest_of_each.append(Gbest_of_all)
 # print(f'result_list: {result_list}')
 # print(f'Gbest_of_each: {Gbest_of_each}')
+
 col_list = []
-for i in range(len(Gbest_of_all)):
-    col_list.append(str(i+1))
-df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns= col_list)
+for i in range(replication):
+    col_list.append(str(i + 1))
+col_list.append('Benchmark')
+df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns=col_list)
+print(df_replication)
 # print(df_replication)
 # print(np.array(result_list, dtype='object'))
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
@@ -748,7 +755,7 @@ df_replication.to_csv('Data/avoa_replication_output_100.csv')
 replication = 10
 result_list =[]
 runtime_list_out = []
-
+Gbest_of_each = []
 for func_num in range(13):
     print(f"Benchmark: {func_num+1}")
     Gbest_of_all = []
@@ -806,15 +813,17 @@ for func_num in range(13):
 
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
-
-Gbest_of_each = []
-Gbest_of_each.append(Gbest_of_all)
+    Gbest_of_all.append(str_func)
+    Gbest_of_each.append(Gbest_of_all)
 # print(f'result_list: {result_list}')
 # print(f'Gbest_of_each: {Gbest_of_each}')
+
 col_list = []
-for i in range(len(Gbest_of_all)):
-    col_list.append(str(i+1))
-df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns= col_list)
+for i in range(replication):
+    col_list.append(str(i + 1))
+col_list.append('Benchmark')
+df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns=col_list)
+print(df_replication)
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
 df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
 
@@ -827,6 +836,7 @@ df_replication.to_csv('Data/pso_replication_output_30.csv')
 replication = 10
 result_list =[]
 runtime_list_out = []
+Gbest_of_each = []
 
 for func_num in range(13):
     print(f"Benchmark: {func_num+1}")
@@ -886,14 +896,17 @@ for func_num in range(13):
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
 
-Gbest_of_each = []
-Gbest_of_each.append(Gbest_of_all)
+    Gbest_of_all.append(str_func)
+    Gbest_of_each.append(Gbest_of_all)
 # print(f'result_list: {result_list}')
 # print(f'Gbest_of_each: {Gbest_of_each}')
+
 col_list = []
-for i in range(len(Gbest_of_all)):
-    col_list.append(str(i+1))
-df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns= col_list)
+for i in range(replication):
+    col_list.append(str(i + 1))
+col_list.append('Benchmark')
+df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns=col_list)
+print(df_replication)
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
 df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
 
@@ -906,7 +919,7 @@ df_replication.to_csv('Data/pso_replication_output_100.csv')
 replication = 10
 result_list =[]
 runtime_list_out = []
-
+Gbest_of_each = []
 for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
@@ -962,14 +975,17 @@ for func_num in range(13):
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
 
-Gbest_of_each = []
-Gbest_of_each.append(Gbest_of_all)
+    Gbest_of_all.append(str_func)
+    Gbest_of_each.append(Gbest_of_all)
 # print(f'result_list: {result_list}')
 # print(f'Gbest_of_each: {Gbest_of_each}')
+
 col_list = []
-for i in range(len(Gbest_of_all)):
+for i in range(replication):
     col_list.append(str(i+1))
+col_list.append('Benchmark')
 df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns= col_list)
+print(df_replication)
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
 df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
 
@@ -982,7 +998,7 @@ df_replication.to_csv('Data/tlbo_replication_output_30.csv')
 replication = 10
 result_list =[]
 runtime_list_out = []
-
+Gbest_of_each = []
 for func_num in range(13):
     Gbest_of_all = []
     runtime_list = []
@@ -1037,15 +1053,17 @@ for func_num in range(13):
 
     result_list.append(temp_list_result)
     runtime_list_out.append(temp_list_runtime)
-
-Gbest_of_each = []
-Gbest_of_each.append(Gbest_of_all)
+    Gbest_of_all.append(str_func)
+    Gbest_of_each.append(Gbest_of_all)
 # print(f'result_list: {result_list}')
 # print(f'Gbest_of_each: {Gbest_of_each}')
+
 col_list = []
-for i in range(len(Gbest_of_all)):
-    col_list.append(str(i+1))
-df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns= col_list)
+for i in range(replication):
+    col_list.append(str(i + 1))
+col_list.append('Benchmark')
+df_replication = pd.DataFrame(np.array(Gbest_of_each, dtype='object'), columns=col_list)
+print(df_replication)
 df_result = pd.DataFrame(np.array(result_list, dtype='object'), columns=['Benchmark', 'Mean','Mean_no_outlier', 'Median', 'Best', 'Worst', 'STD'])
 df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['Benchmark', 'Mean', 'Median', 'Best', 'Worst', 'STD'])
 
