@@ -273,7 +273,8 @@ def get_lower_upper_bound(func_num):
         return lower, upper
 
 
-replication = 1
+replication = 30
+
 result_list =[]
 runtime_list_out = []
 
@@ -283,7 +284,7 @@ for func_num in range(13):
     runtime_list = []
     pop = 500  # Population size n 1000
     MaxIter = 300  # Maximum number of iterations. 500
-    dim = 100  # The dimension. 30
+    dim = 30  # The dimension. 30
     lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
     for i in range(replication):
         time_start = time.time()
@@ -343,6 +344,6 @@ df_runtime = pd.DataFrame(np.array(runtime_list_out, dtype='object'), columns=['
 
 import os
 os.makedirs('Data', exist_ok=True)
-df_result.to_csv('Data/pso_result_output_100_2.csv')
-df_runtime.to_csv('Data/pso_runtime_output_100_2.csv')
+df_result.to_csv('Data/pso_result_output_30.csv')
+df_runtime.to_csv('Data/pso_runtime_output_30.csv')
 

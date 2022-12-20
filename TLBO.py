@@ -294,8 +294,8 @@ def fun(X):
 
 
 time_start = time.time()
-pop = 100  # 100
-MaxIter = 500  # 500
+pop = 50  # 100
+MaxIter = 300  # 500
 dim = 30  # 30
 lower = -50
 upper = 50
@@ -309,6 +309,6 @@ time_end = time.time()
 print(f"The running time is: {time_end - time_start} s")
 print('The optimal value：', GbestScore)
 print('The optimal solution：', GbestPositon)
-plot_convergrnce(conver)
-plot_search_history(history)
-plot_fitness(fit_history)
+# plot_convergrnce(conver)
+# plot_search_history(history)
+# plot_fitness(fit_history)

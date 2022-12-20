@@ -149,11 +149,16 @@ def rouletteWheelSelection(first_best_vulture, second_best_vulture, L1, L2):
 
 
 def explorationPhase(current_vulture, target_vulture, F, p1, upper_bound, lower_bound):
+
     if p1 > random.random():  # Behavior 1
+        # equation(6)
         current_vulture = target_vulture - (abs((2 * random.random()) * target_vulture - current_vulture)) * F
+
     else:  # Behavior 2
+        # equation(8)
         current_vulture = (target_vulture - F + random.random() * (
                 (upper_bound - lower_bound) * random.random() + lower_bound))
+
     return current_vulture
 
 
@@ -182,6 +187,7 @@ def exploitationPhase(current_vulture, first_best_vulture, second_best_vulture, 
             current_vulture = (A1 + A2) / 2
 
         else:  # Behavior 6
+            # equation(17)
             current_vulture = target_vulture - abs(target_vulture - current_vulture) * F * levyFlight(dim)
 
     return current_vulture
@@ -197,7 +203,7 @@ def levyFlight(dim):  # equation(18)
 
 def AVOA(pop, dim, lb, ub, max_iterations, func):
 
-    # Set Params
+    # 【Set Params】
     L1 = 0.8
     L2 = (1 - L1)
     p1 = 0.6
@@ -268,7 +274,7 @@ def AVOA(pop, dim, lb, ub, max_iterations, func):
 
 
 def func(X):
-    return F2(X)
+    return F5(X)
 
 
 pop = 30  # Population size

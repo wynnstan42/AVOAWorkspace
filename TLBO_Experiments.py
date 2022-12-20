@@ -356,7 +356,7 @@ for func_num in range(13):
     runtime_list = []
     pop = 100 #100
     MaxIter = 300 #500
-    dim = 30 #30
+    dim = 100 #30
     lower, upper = get_lower_upper_bound(func_num)  # The lower and upper bound of the search interval.
     for i in range(replication):
         conver=[]
